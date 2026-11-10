@@ -1,0 +1,16 @@
+bars per asset: 6263 (4h, 2024-01-01 -> 2026-11-09, Binance.US)
+
+=== SCOREBOARD (expectancy, best first) ===
+FOMO_PANIC           n=  5 win=20% avgW=$20.40 avgL=$10.88 exp=$-4.62/trade PF=0.47 net=$-23.12 maxDD=$31.08 [UNPROVEN n=5]
+Q_LEARNING           n= 29 win=21% avgW=$26.96 avgL=$17.38 exp=$-8.20/trade PF=0.40 net=$-237.91 maxDD=$257.26 [UNPROVEN n=29]
+BOLLINGER_FADE       n=  6 win=17% avgW=$100.60 avgL=$31.51 exp=$-9.49/trade PF=0.64 net=$-56.96 maxDD=$157.56 [UNPROVEN n=6]
+BREAKOUT             n= 11 win=18% avgW=$26.50 avgL=$17.64 exp=$-9.61/trade PF=0.33 net=$-105.72 maxDD=$107.59 [UNPROVEN n=11]
+
+=== ALLOCATION of $10,000 paper (proven winners only) ===
+  FOMO_PANIC           $0.00
+  Q_LEARNING           $0.00
+  BOLLINGER_FADE       $0.00
+  BREAKOUT             $0.00
+
+=== SUPERVISOR === {'live': ['FOMO_PANIC', 'RSI_MEAN_REVERSION', 'BOLLINGER_FADE', 'BREAKOUT', 'Q_LEARNING'], 'benched': [], 'restarts': {'FOMO_PANIC': 0, 'RSI_MEAN_REVERSION': 0, 'BOLLINGER_FADE': 0, 'BREAKOUT': 0, 'Q_LEARNING': 0}, 'crashes': 0}
+=== TRADEMEMORY WEIGHTS === {'Q_LEARNING': 0.023, 'BREAKOUT': 0.023, 'BOLLINGER_FADE': 0.4776, 'FOMO_PANIC': 0.4765}
