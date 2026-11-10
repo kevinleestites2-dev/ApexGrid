@@ -75,6 +75,16 @@ Kevin ordered the test after pausing ApexGrid: 14 strategies (his 3 + Plan B 3 +
 - **Mean reversion as backbone (V2.7, Kevin's call): 24 variants tested hardest** (z −1.5/−2/−2.5 × exit mean/5-MA × ADX gate on/off × 1h/15m, `experiments_v2_mr.py`, `experiments_v2_mr_results.json`) — **ALL FAIL in both modes and both splits.** Best test expectancy −$0.81/trade (Kraken), best PF 0.91. Win rate ~15–25%: the mean rarely comes back before the −1.5% stop. **The backbone idea did not hold; mean reversion is benched, no backbone swarm was built.**
 - **Funded swarm is still Dump & Hedge only (v1, +$242.56, +2.43%).** v2 adds nothing to it. Do NOT take the Kraken challenge on this evidence.
 
+## v3 — static drawdown, random baseline, grid fixes, MR v2, 4h/daily (2026-11-10)
+Kevin approved this run (Claude's fixes). Code: `experiments_v3.py` + `smoke_v3.py` (**18/18 pass**) + `fetch_1h_4h.py` (rebuilds `data/*_1h.json` / `*_4h.json` from Binance.US, no key; probe-tested live). Full numbers: `experiments_v3_results.json` (146 entries), `test_report.md` §§V3.0–V3.8.
+- **CORRECTION — Kraken Funded drawdown is STATIC, not trailing** (verified from Kraken's own pages: "a single static limit", "fixed 3% drawdown floor", floor $9,700 on $10k). v0/v1/v2 measured from peak equity, which is stricter. v3 gates on static DD (min equity ≥ $9,700) and reports peak DD alongside. **Second correction: v2 understated the Dynamic Grid's DD ~2.2x** — the true combined account curve (all three assets' unrealised lots summed) gives test static DD $1,441 / peak $2,187, not $1,007; the base grid breaches $300 even in train.
+- **Random-entry baseline:** same exits/costs, random entries. 1h Kraken costs: random ≈ breakeven (test exp +$2.14, PF 1.13, within noise of zero) while most real signals lose — **the signals are worse than random on 1h**; at hard costs even random loses, so exits/fees are part of it too. Random is a yardstick, never funded.
+- **Dump & Hedge 2026 hold-out (T3/TP8/SL10/H96): HOLDS UP in Kraken mode** — 2026 n=33, exp +$1.36, PF 1.30, net +$44.78, static DD $43.43 (the ONLY gate-passer in v3); hard mode fails PF (1.13). Full-sample hard numbers reproduce v1 exactly. **Still the sole funded edge.**
+- **Grid fixes (11 configs): NONE passes.** Every fix that contains DD kills expectancy (DD-stop $100/$150: DD passes, exp −$4.21/−$2.58); every fix that keeps expectancy keeps DD ≥ $957 (ADX20: exp +$1.55, PF 1.64, sDD $957). Combined fix passes DD (static $28.50, peak $151.99) but PF 1.18 and train-negative. The grid's edge IS holding underwater lots.
+- **Mean reversion v2: 27 variants × 2 modes, ALL FAIL** (best test exp −$0.34, best PF 0.96). SL −3% ≡ SL −5% — the 5-bar-low stop binds first, so the wide stop never engages. Dead twice over.
+- **4h/daily:** TrendRider daily looks great (test PF 3.36, exp +$40.02) on **n=15 — do NOT fund**, forward-paper only. Turtle short diagnostic (DIAG-SHORT, not Kraken-eligible) also loses.
+- **Full v2 set under static DD: 0 of 14 pass, stack EMPTY in both modes (n=0, net $0).** Four strategies now pass the DD gate in Kraken test (RSI2, Volume Breakout, Mean Reversion, Kalman) but all fail exp/PF. **Kraken target +$1,200: NOT HIT. Do NOT take the challenge on this evidence.**
+
 ## Name & GitHub home — ApexGrid (confirmed)
 **Name: ApexGrid.** Kevin offered it twice and confirmed it — this is the bot's name.
 - **GitHub home is live: https://github.com/kevinleestites2-dev/ApexGrid — private, created 2026-11-10 by Zapia, first code push 2026-11-10 (commit 60774389827db8954f1d8b679126449275135691, branch main).**
@@ -190,6 +200,9 @@ python3 experiments.py dump   # 15m track only (needs data/*_15m.json)
 python3 experiments.py new1h  # new 1h strategies + meta-learner only
 python3 experiments_v2.py     # v2: 14 strategies, train 2024-25 / test 2026, hard + Kraken modes
 python3 smoke_v2.py         # v2 smoke (30 checks, all passing)
+python3 smoke_v3.py         # v3 smoke (18 checks, all passing) — MUST pass before any v3 backtest
+python3 experiments_v3.py [random|dump|grid|mr|tf|static|all]  # v3: static DD gate, random baseline, Dump 2026 hold-out, grid fixes, MR v2, 4h/daily, full v2 re-run
+python3 fetch_1h_4h.py [1h|4h|1d]  # rebuild data/*_1h.json / *_4h.json (/ *_1d.json) from Binance.US, no key
 python3 bellman_scan.py  # Bellman paper-scan over real 1h closes
 ```
 
@@ -213,6 +226,8 @@ python3 bellman_scan.py  # Bellman paper-scan over real 1h closes
 | `smoke_test.py` | 24 checks incl. crash-isolation, Kelly, mints, Bellman, live guard, learning loop. All passing. |
 | `brain.json` | TradeMemory persistence (written by backtest runs). |
 | `experiments_v2.py` / `smoke_v2.py` / `experiments_v2_results.json` | v2: 14 strategies (Kevin's 3, Plan B 3, TrendRider, Turtle x2, EMA Ribbon, Momentum rotation, Range, Volume breakout, Trend Assassin, Mean-reversion z-score), risk-sized, train 2024–25 / test 2026, hard + Kraken cost modes, stacked swarm of passers only. Smoke 30/30. Result: 0 pass, stack empty. |
+| `experiments_v3.py` / `smoke_v3.py` / `experiments_v3_results.json` / `v3_run.log` | v3: STATIC drawdown gate (min equity ≥ $9,700) + peak DD alongside; random-entry baseline; Dump & Hedge 2026 hold-out; 11 Dynamic Grid drawdown fixes; mean reversion v2 (27 variants); 4h/daily versions + DIAG-SHORT; full v2 14-strategy re-run under static DD. Smoke 18/18. Result: 0 new passers, stack empty; only Dump & Hedge (Kraken mode, 2026 hold-out) passes. |
+| `fetch_1h_4h.py` | Fetches 1h/4h/1d klines from Binance.US (public, no key); probe-tested live. Rebuilds `data/*_1h.json` / `*_4h.json` for a fresh clone. |
 | `test_report.md` | Actual test output + backtest numbers. |
 
 ## Where every idea came from (provenance)

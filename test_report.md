@@ -496,3 +496,115 @@ Every variant is negative on expectancy in BOTH splits and BOTH modes — this i
 Why it fails — the pattern is the same in all 24 variants: **the win rate is ~15–25%, and the mean almost never comes back before the stop or the time stop.** The TP (the 20-period mean, or the 5-period MA) is far away — price is 2+ SD below the mean, so the round trip to the mean is a big move — while the SL is capped at −1.5%. Wins are big when they land (avg win $20–$47) but rare; losses are small and constant (avg loss $7–$14). At a 20% win rate you need avg win ≈ 4× avg loss just to break even, and the data gives ~2–3×. Loosening the threshold to z−1.5 (more trades, n=1,129 in test on 15m) does not help — win rate stays ~21%. Tightening to z−2.5 (rarer, deeper dips) does not help either — win rate stays ~15–25% and n falls. Removing the ADX gate (trading in trends too) makes it worse, not better: the no-ADX variants have the worst drawdowns (up to $6,650 hard mode). The ADX<25 gate helps the drawdown but not the expectancy. The 15m versions trade far more often (n up to 1,129 in test) and lose more in total; the 1h versions trade less and lose less per trade in Kraken mode, but still lose.
 
 **Selection-bias note:** the best of 24 variants was picked on the test split and it STILL loses (−$0.81/trade). There is no cherry-picked version of this idea that passes. A forward-paper retest would not rescue it — the failure is in-sample and out-of-sample, in both cost modes, across every knob. **Mean reversion is benched as the backbone, and as a strategy. It joins RSI(2) and Bollinger in the benched mean-reversion family (v0/v1/v2).**
+
+
+---
+
+# ApexGrid v3 — Test Report (2026-11-10)
+**Paper / simulation ONLY. `LIVE_MODE = False` everywhere. No API keys, no live trades, no Kraken challenge entered, no GitHub push.**
+Code: `experiments_v3.py`, `smoke_v3.py` (**18/18 checks pass**), `fetch_1h_4h.py`. Full numbers: `experiments_v3_results.json` (146 entries). Full log: `v3_run.log`.
+Data: same real Binance.US klines as v2 (1h 25,050 bars/asset, 4h 6,263, 15m 100,200), through 2026-11-10. Split: **train 2024–2025, test 2026-01-01 → 2026-11-10 (out-of-sample)**. Two cost modes: **HARD** (0.30% RT) and **KRAKEN** (spread-only ~0.05% RT).
+Gates (v3): expectancy > 0, PF > 1.2, n ≥ 100 (all-data), **STATIC DD ≤ $300** (min equity ≥ $9,700). Peak DD reported alongside, not gated.
+
+**Bottom line: v3 still does NOT hit the Kraken target. The stacked swarm of NEW v3 passers is EMPTY in both modes (n=0, net $0) — same as v2. The static-drawdown correction changes the numbers but not the verdicts: no benched strategy is re-funded, because every strategy that now passes the DD gate still fails expectancy/PF. The one thing that survives is the old edge: Dump & Hedge holds up on the 2026 hold-out in Kraken mode (n=33, exp +$1.36, PF 1.30, net +$44.78, static DD $43.43) — the ONLY gate-passer in the entire 146-entry v3 file. It remains the sole funded edge, and it is nowhere near $1,200. The grid fixes prove a hard trade-off: every fix that contains the drawdown kills the expectancy, and every fix that keeps the expectancy keeps the drawdown above $950. Mean reversion is dead twice over. And the random-entry baseline beats most real signals on 1h at Kraken costs — the signals are worse than random entries with the same exits.**
+
+## V3.0 Smoke tests — 18/18 PASS
+`python3 smoke_v3.py`. Live guard; static-DD maths on synthetic trades ([+100, −250] → static $150, peak $250, minEq $9,850; win-then-dip → static stays $0 while peak DD is $50 — the static floor does not trail); fetcher probe (3 fresh live 1h bars from Binance.US into a temp dir, never touching `data/`); splits sane on all timeframes; daily resample (1,045 bars, test 314); random baseline deterministic per seed; Dump simulator runs; MR v2 signals valid; short-diagnostic engine runs short-only; 4h/daily signals valid. **Grid base reproduces v2 exactly on trades** (Kraken train net +$4,558.15, n=1,666; test net +$1,161.33, n=546) — so every fix comparison built on it is valid. The DD numbers do NOT reproduce v2's, on purpose: see §V3.1.
+
+## V3.1 CORRECTION — drawdown is STATIC, and v2 understated the grid's DD
+**Kraken Funded uses a STATIC 3% drawdown, fixed from starting balance** — verified from Kraken's own pages, 2026-11-10 (kraken.com/learn/how-do-prop-trading-firms-work, kraken.com/gb/learn/best-crypto-prop-firms): "Kraken Funded uses a single static limit", "a fixed 3% drawdown floor with no separate daily limit", "the floor is $9,700" on a $10,000 account. Traders do not get leverage and all trades are limited to 1x exposure, and Kraken Funded has zero trading commissions — which also supports the Kraken cost mode (spread-only ~0.05%) as the challenge-relevant one, with hard mode (0.30%) as the pessimistic bound. Caveat: one third-party roundup (daytrading.com) lists a 5% max DD for Kraken Funded; Kraken's own pages say 3%, so v3 gates on 3%. **v0/v1/v2 measured drawdown from PEAK equity, which is stricter than Kraken.** v3 measures both and gates on static — but nothing is silently re-funded on static DD alone; peak DD is reported alongside every number.
+How much does static help? A lot on paper, not enough in practice. Kraken mode, test split, static vs peak DD: Pullback $405 vs $780; Turtle $590 vs $682; Kalman $160 vs $277; Mean Reversion $291 vs $291; RSI2 $217 vs $217. In train the gap is bigger (Pullback $22 vs $616; Turtle $20 vs $393 — train equity almost never fell below its starting balance). **Four §7 strategies pass the static DD gate in the Kraken test (RSI2, Volume Breakout, Mean Reversion, Kalman) — and ALL FOUR still fail on expectancy/PF.** The binding constraint is now the edge, not the drawdown. In hard mode, zero §7 strategies pass static DD in test.
+**Second correction, found while building the grid fixes: v2 UNDERSTATED the Dynamic Grid's drawdown by ~2.2x.** v2 reported max(worst-single-asset equity DD, pooled realised-trade DD) = $1,007 in the Kraken test. But the grid runs on all three assets at once on one $10k account, and in the 2026 bear year all three hold underwater lots at the same time — their unrealised losses ADD. The true combined account curve (all three assets' realised + unrealised equity summed bar by bar) gives **test static DD $1,441, peak DD $2,187** (train: static $318, peak $3,334). The base grid breaches the $300 static limit **even in train** ($318 Kraken, $372 hard). v3 reports the combined curve as primary, worst-asset DD alongside. (Same lesson, smaller: v1's Dump maxDD $169.96 was computed on trades pooled in asset order; the chronological pooled peak DD is $198.68 hard / $180.95 Kraken. Net/exp/PF reproduce v1 exactly.)
+
+## V3.2 Random-entry baseline — the signals are worse than random (1h, Kraken costs)
+Random entries (Bernoulli per bar when flat: p=0.01 on 1h, 0.04 on 4h), same exits as a typical strategy (TP +2% / SL −1.5%, 100-bar hold, risk 0.5%/trade), 3 seeds each, same two cost modes. Win rate ~47–49% on 1h Kraken (avg win ~$38–39 vs avg loss ~$31 — the +2/−1.5 asymmetry).
+
+| Baseline | Test exp (mean of 3 seeds) | Test PF | Test net | Test static DD | All-data exp / PF |
+|---|---|---|---|---|---|
+| RANDOM 1h, hard | −$2.67 | 0.86 | −$531 | $660 | −$4.39 / 0.78 |
+| RANDOM 1h, kraken | **+$2.14** | 1.13 | **+$428** | $158 | +$0.41 / 1.03 |
+| RANDOM 4h, hard | −$8.29 | 0.62 | −$1,605 | $1,616 | −$6.69 / 0.68 |
+| RANDOM 4h, kraken | −$3.49 | 0.82 | −$683 | $830 | −$1.90 / 0.90 |
+
+Read it carefully. **At hard costs even random entries lose** (−$2.67 on 1h, −$8.29 on 4h) — fees and the exit structure are a real part of the problem. **At Kraken costs on 1h, random entries are roughly breakeven to slightly positive in test** (exp +$2.14, PF 1.13; all-data exp +$0.41, PF 1.03 — within noise of zero: per-trade σ ≈ $35, n ≈ 200/seed, so SE ≈ $2.50/trade). Most real v2 signals LOSE money in that same Kraken test (−$1.50 to −$8.13/trade) — **they are worse than random entries with the same exits.** So it is both: exits/fees eat the edge at hard costs, AND the signals add negative value on 1h. On 4h random loses clearly in both modes, so 4h signal losses are exits/fees plus signals together. **Random is NOT a strategy and is never funded** (PF 1.13 < 1.2, all-data exp ≈ $0, and it is random) — it is a yardstick, and most of the menu measures short against it.
+
+## V3.3 Dump & Hedge 2026 hold-out — HOLDS UP (Kraken mode), weakens (hard mode)
+v1 tuned T3/TP8/SL10/H96, $300 size, re-tested on 2026 out-of-sample only. It was picked from 32 tuned variants, so this is the honest check.
+
+| Dump & Hedge | Full n / exp / PF / net | 2026-only n / exp / PF / net / sDD / pDD |
+|---|---|---|
+| Hard (0.30%) | 161 / +$1.51 / 1.26 / +$242.56 | 33 / +$0.63 / 1.13 / +$20.95 / $48.73 / $61.49 **[fail: PF]** |
+| Kraken (~0.05%) | 161 / +$2.23 / 1.41 / +$359.03 | 33 / +$1.36 / 1.30 / +$44.78 / $43.43 / $59.09 **[PASS-2026]** |
+
+The full-sample hard numbers reproduce v1 exactly (n=161, exp +$1.51, PF 1.26, net +$242.56) — the simulator is faithful. **Verdict: it holds up, it does not collapse.** In Kraken mode the 2026 hold-out passes the test gate (exp>0, PF 1.30, n=33, static DD $43) — the only gate-passer in v3. But it is weaker out-of-sample (2026 exp is ~60% of full-sample in Kraken mode, ~40% in hard mode), and in hard mode it fails the PF gate (1.13). Per-asset 2026 (Kraken): BTC n=4, 4 wins, exp +$10.42, PF 999 — **small-n luck, not proof** (4 trades); ETH n=14, exp −$1.03, net −$14.47 — still negative in 2026; SOL n=15, exp +$1.17, net +$17.57. **Dump & Hedge remains the sole funded edge (unchanged from v1).** n=33 in 2026 is thin; it earns a continued funded slot, not a bigger one. Full-data static DD is $0.48 (Kraken) — the equity curve almost never went below its starting balance.
+
+## V3.4 Dynamic Grid drawdown fixes — every fix that contains DD kills the edge
+Base: the only v2 strategy positive in test (Kraken test exp +$2.13, PF 2.15, net +$1,161) — but under the honest combined curve its test static DD is $1,441 (4.8x the limit) and peak DD $2,187. Goal: static DD ≤ $300 AND PF > 1.5. Each fix tested separately and combined, both cost modes (Kraken test shown; hard is worse in the same direction).
+
+| Fix (Kraken test) | n | Exp | PF | Net | Static DD | Peak DD | Verdict |
+|---|---|---|---|---|---|---|---|
+| BASE (v2) | 546 | +$2.13 | 2.15 | +$1,161 | $1,441 | $2,187 | FAIL (DD 4.8x) |
+| ADX cutoff 15 | 150 | −$0.10 | 0.98 | −$16 | $715 | $771 | FAIL — kills the edge |
+| ADX cutoff 20 | 354 | +$1.55 | 1.64 | +$550 | $957 | $1,336 | FAIL — PF up, DD still 3.2x |
+| Cap open inventory 3 lots | 88 | −$1.73 | 0.67 | −$152 | $550 | $615 | FAIL — kills the edge |
+| Cap open inventory 5 lots | 151 | −$0.94 | 0.79 | −$141 | $873 | $940 | FAIL — kills the edge |
+| Hard exit on grid break | 546 | −$0.44 | 0.82 | −$242 | $446 | $466 | FAIL — flips negative; the DGT hold IS the edge |
+| Spacing scaled to volatility (ATR) | 672 | +$1.86 | 2.16 | +$1,247 | $2,231 | $2,826 | FAIL — DD worse, not better |
+| Hard stop on unrealised DD $100 | 55 | −$4.21 | 0.36 | −$231 | $104 | $171 | FAIL — DD passes, expectancy destroyed (halted) |
+| Hard stop on unrealised DD $150 | 87 | −$2.58 | 0.54 | −$224 | $181 | $247 | FAIL — same pattern (halted) |
+| COMBINED (ADX20 + maxlot5 + break + ATR + DDstop150) | 437 | +$0.34 | 1.18 | +$148 | **$28.50** | **$151.99** | FAIL — DD passes both, PF 1.18 < 1.2, train NEGATIVE (exp −$0.16, net −$119), all-data PF 1.01 |
+| COMBINED, no break-exit | 114 | −$0.52 | 0.87 | −$59 | $78 | $416 | FAIL — negative in test |
+
+**Goal met by NONE.** The pattern is the whole story: capping inventory (3/5 lots) starves the grid of its small wins while the remaining lots still carry big losses; the break-exit realises the losses the DGT hold was deferring (train flips negative too, Kraken exp −$0.09); the unrealised-DD stop fires exactly when lots are deepest underwater and converts unrealised DD into realised losses, then halts the grid (n collapses to 55–87 in test); ATR spacing makes the DD worse. The combined fix is the closest thing to a pass on drawdown (static $28.50, peak $151.99 — both inside the limits) and it still fails, because its PF is 1.18 and it loses money in train. **The grid's edge IS its willingness to hold underwater lots. You cannot have both the edge and the drawdown limit.** Scaling the grid down does not help either (v2's note stands): leg $20 would put DD ~$100 but net ~$116 — the net/DD ratio cannot reach $1,200 inside $300. Dynamic Grid stays benched.
+
+## V3.5 Mean reversion v2 — dead twice over (27 variants × 2 modes, ALL FAIL)
+Wide stops / time exits instead of the −1.5% stop that killed v2: SL −1.5%/−3%/−5%, time exit 24h/48h (1h) / 96 bars (15m), exit at the mean, z −1.5/−2/−2.5, 1h and 15m, ADX<25, BTC/ETH only. **Not one of the 54 runs passes the test gate in either mode.** Best test expectancy anywhere is −$0.34/trade (z−2.5, SL−3%/−5%, 48h, 1h, Kraken, PF 0.96, n=74, win 16.2%); best PF anywhere is 0.96. Every variant is negative on expectancy in both splits and both modes.
+The diagnostic that matters: **SL −3% and SL −5% give IDENTICAL results in nearly every row.** The stop is `max(5-bar low, entry × (1 − sl%))`, and the 5-bar low is almost always inside 3% of entry, so the wider cap never binds — the "wide stop" barely changes anything. 24h vs 48h barely matters either. The failure is not the stop: price 2 SD below the 20-period mean simply does not come back to the mean within 24–48 hours, and the win rate stays ~16–17% on 1h (~20% on 15m). Mean reversion is benched as the backbone and as a strategy — confirmed by v2 (24 variants) and v3 (27 variants). It joins RSI(2) and Bollinger in the benched mean-reversion family.
+
+## V3.6 4h / daily versions — TrendRider daily looks great on n=15 (do NOT fund it)
+Best v2 strategies (Trend Following, Pullback, TrendRider, Turtle) on 4h and daily bars, long-only. Daily bars are resampled from the 1h klines (1,045 bars/asset, test 314); no daily file exists yet (`fetch_1h_4h.py` can fetch 1d to rebuild them). Trend Following / Pullback / Turtle on 4h are the v2 runs themselves, re-reported under static DD in §V3.7.
+
+| Strategy (Kraken test) | n | Exp | PF | Net | Static DD | Peak DD | Verdict |
+|---|---|---|---|---|---|---|---|
+| TREND_FOLLOW daily | 11 | −$10.57 | 0.57 | −$116 | $116 | $254 | Benched (n=11) |
+| PULLBACK daily | 7 | +$13.60 | 1.47 | +$95 | $0 | $203 | Benched — n=7, noise |
+| TURTLE daily | 21 | −$3.62 | 0.70 | −$76 | $160 | $160 | Benched — train was +$3.14/PF 1.29, flips in test |
+| TRENDRIDER 4h | 114 | −$14.48 | 0.41 | −$1,651 | $1,651 | $1,671 | Benched — catastrophic |
+| TRENDRIDER daily | 15 | **+$40.02** | **3.36** | **+$600** | **$0** | $152 | **Benched — n=15.** Train is also positive (+$12.53, PF 1.46, n=22), all-data n=37, exp +$23.68, PF 2.03, net +$876. It looks like the best thing in v3 and it is 15 test trades over a 314-bar test window, each trade lasting up to 100 days (ladder 30/60 bars = 30/60 days on daily). **Do not fund, do not chase — it needs a forward-paper test, not capital.** Flagged here so nobody quotes the PF 3.36 without the n=15. |
+
+DIAG-SHORT (shorts are NOT Kraken-eligible — 1x spot, no leverage; diagnostic only, never gated, never stacked): Turtle short on 4h, Kraken test n=155, exp −$1.41, PF 0.87, net −$219, static DD $239, peak DD $631. Shorts do not save Turtle either.
+
+## V3.7 Full v2 14-strategy set under STATIC drawdown — verdicts unchanged, reasons changed
+Exp/PF/net reproduce v2 exactly (verified on every strategy). Under the static gate, 0 of 14 pass in either mode. Kraken-mode test split (static DD / peak DD alongside):
+
+| Strategy | Test n / exp / PF / net | Static DD | Peak DD | Verdict |
+|---|---|---|---|---|
+| TREND_FOLLOW_4H | 100 / −$7.84 / 0.64 / −$784 | $1,191 | $1,359 | Benched |
+| PULLBACK_4H | 127 / +$1.51 / 1.06 / +$192 | $405 | $780 | Benched — positive, fails PF and static DD |
+| RSI2_RANGE_1H | 115 / −$1.64 / 0.62 / −$189 | $217 ✓ | $217 | Benched — passes static DD, fails exp/PF |
+| VWAP_BOUNCE_15M | 177 / −$2.40 / 0.80 / −$425 | $432 | $463 | Benched |
+| VWAP_RETEST_15M | 206 / −$1.97 / 0.70 / −$405 | $405 | $419 | Benched |
+| TRENDRIDER_1H | 404 / −$4.12 / 0.61 / −$1,665 | $1,665 | $1,712 | Benched |
+| TURTLE_4H | 103 / +$0.69 / 1.05 / +$71 | $590 | $682 | Benched — positive, fails PF and static DD |
+| TURTLE_TP1_4H | 164 / −$2.89 / 0.74 / −$473 | $473 | $651 | Benched |
+| EMA_RIBBON_15M | 1,848 / −$1.34 / 0.72 / −$2,471 | $2,471 | $2,594 | Benched |
+| RANGE_1H | 392 / −$1.23 / 0.89 / −$481 | $481 | $990 | Benched |
+| VOL_BREAKOUT_1H | 347 / −$0.45 / 0.95 / −$158 | $273 ✓ | $353 | Benched — passes static DD, fails exp/PF |
+| TREND_ASSASSIN_1H | 117 / −$3.88 / 0.75 / −$454 | $633 | $633 | Benched |
+| MEAN_REV_ZSCORE_1H | 77 / −$1.56 / 0.81 / −$120 | $291 ✓ | $291 | Benched — passes static DD, fails exp/PF |
+| DYN_GRID_1H | 546 / +$2.13 / 2.15 / +$1,161 | $1,441 | $2,187 | Benched — positive, DD 4.8x static limit (combined curve, §V3.1) |
+| KALMAN_PAIRS_1H | 256 / −$0.04 / 0.99 / −$11 | $160 ✓ | $277 | Benched — breakeven, passes static DD, fails exp/PF |
+| MOMENTUM_ROT_1H | 23 / −$7.22 / 0.78 / −$166 | $365 | $365 | Benched (n=89 total < 100) |
+
+Hard mode is worse in the same direction (test static DD: best is Kalman $628; nothing ≤ $300). **Stacked swarm: EMPTY in both modes (n=0, net $0). Kraken target +$1,200: NOT HIT.** Including the pre-existing Dump & Hedge edge, the Kraken-mode stack is Dump only: full net +$359.03, 2026 net +$44.78 — 3.7% of the target in the hold-out year.
+
+## V3.8 What still fails / what is unproven
+- **No NEW strategy passes the v3 gates.** The only gate-passer in the whole v3 file is Dump & Hedge in Kraken mode on its 2026 hold-out (§V3.3). Everything else — 14 re-run strategies, 11 grid fixes, 27 mean-reversion variants, 4h/daily versions — fails.
+- **The Kraken challenge is not enterable on this evidence.** No stack passes the gates; the funded edge (Dump & Hedge) makes +$44.78 in the 2026 hold-out year at Kraken costs. Do NOT take the challenge on this.
+- **Small-n traps flagged, not funded:** TrendRider daily (test PF 3.36, n=15), Pullback daily (PF 1.47, n=7), Dump BTC 2026 (PF 999, n=4). A PF of 999 on 4 trades is not an edge.
+- **Bugs / corrections found in v3 (all disclosed):**
+  1. **v2 understated the Dynamic Grid's drawdown ~2.2x** (§V3.1): the combined account curve replaces the max(worst-asset, pooled-realised) hybrid. Base grid test static DD $1,441 / peak $2,187, not $1,007.
+  2. **v1's Dump maxDD was asset-ordered** ($169.96); chronological pooled peak DD is $198.68 hard / $180.95 Kraken. Net/exp/PF reproduce exactly.
+  3. **Mean-reversion SL −3% ≡ SL −5%** (§V3.5): the 5-bar-low stop binds first, so the wider cap never engages. The stop was never the binding constraint.
+  4. **No new fake runs.** The v2 grid PF=999 run stays void; PF=999 appears in v3 only in labelled small-n per-asset slices, never as a strategy result.
+- **No live anything.** No keys, no orders, no challenge entry, no entry fee. Code is NOT pushed to GitHub (report first, Kevin decides).

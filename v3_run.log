@@ -1,0 +1,165 @@
+15m data: 100200 bars/asset, split@70176 (2026-01-01), test bars=30024
+1h data: 25050 bars/asset, split@17544 (2026-01-01), test bars=7506
+4h data: 6263 bars/asset, split@4386 (2026-01-01), test bars=1877
+
+== §2 RANDOM-ENTRY BASELINE (same exits/costs as real strategies) ==
+RANDOM_1h seed=7 hard   TEST n= 203 exp=$ -1.73 PF= 0.91 net=$ -351.87 sDD=$ 554.67 pDD=$ 742.89 | ALL n= 646 exp=$ -3.62 PF= 0.81 net=$-2336.45
+RANDOM_1h seed=8 hard   TEST n= 202 exp=$ -3.23 PF= 0.83 net=$ -651.74 sDD=$ 834.31 pDD=$ 978.75 | ALL n= 639 exp=$  -6.1 PF=  0.7 net=$ -3900.2
+RANDOM_1h seed=9 hard   TEST n= 194 exp=$ -3.04 PF= 0.84 net=$ -590.31 sDD=$ 590.31 pDD=$ 758.96 | ALL n= 634 exp=$ -3.44 PF= 0.82 net=$-2183.17
+  RANDOM_1h hard mean over 3 seeds: TEST exp=$-2.67 PF=0.86 net=$-531.31 sDD=$659.76 | ALL exp=$-4.39 PF=0.78 net=$-2806.61
+RANDOM_1h seed=7 kraken TEST n= 203 exp=$ +3.07 PF= 1.19 net=$ +623.32 sDD=$ 199.35 pDD=$ 455.17 | ALL n= 646 exp=$ +1.18 PF= 1.07 net=$  +765.0
+RANDOM_1h seed=8 kraken TEST n= 202 exp=$ +1.58 PF= 1.09 net=$ +318.23 sDD=$ 131.06 pDD=$ 386.29 | ALL n= 639 exp=$ -1.31 PF= 0.93 net=$ -834.89
+RANDOM_1h seed=9 kraken TEST n= 194 exp=$ +1.76 PF= 1.11 net=$ +341.28 sDD=$ 142.09 pDD=$ 355.22 | ALL n= 634 exp=$ +1.36 PF= 1.08 net=$ +860.86
+  RANDOM_1h kraken mean over 3 seeds: TEST exp=$2.14 PF=1.13 net=$427.61 sDD=$157.5 | ALL exp=$0.41 PF=1.03 net=$263.66
+RANDOM_4h seed=7 hard   TEST n= 189 exp=$ -7.96 PF= 0.63 net=$-1503.98 sDD=$1503.98 pDD=$1533.54 | ALL n= 640 exp=$ -5.84 PF= 0.71 net=$-3740.21
+RANDOM_4h seed=8 hard   TEST n= 184 exp=$ -7.04 PF= 0.67 net=$-1295.46 sDD=$ 1329.0 pDD=$1460.67 | ALL n= 614 exp=$ -7.05 PF= 0.66 net=$-4327.86
+RANDOM_4h seed=9 hard   TEST n= 204 exp=$ -9.87 PF= 0.56 net=$-2014.34 sDD=$2014.34 pDD=$2081.36 | ALL n= 648 exp=$ -7.19 PF= 0.66 net=$-4659.27
+  RANDOM_4h hard mean over 3 seeds: TEST exp=$-8.29 PF=0.62 net=$-1604.59 sDD=$1615.77 | ALL exp=$-6.69 PF=0.68 net=$-4242.45
+RANDOM_4h seed=7 kraken TEST n= 189 exp=$ -3.16 PF= 0.83 net=$ -597.95 sDD=$ 856.84 pDD=$ 899.17 | ALL n= 640 exp=$ -1.05 PF= 0.94 net=$ -669.98
+RANDOM_4h seed=8 kraken TEST n= 184 exp=$ -2.24 PF= 0.88 net=$ -413.06 sDD=$  470.0 pDD=$ 649.19 | ALL n= 614 exp=$ -2.25 PF= 0.88 net=$-1383.51
+RANDOM_4h seed=9 kraken TEST n= 204 exp=$ -5.08 PF= 0.74 net=$-1036.87 sDD=$1162.69 pDD=$1239.43 | ALL n= 648 exp=$ -2.39 PF= 0.87 net=$-1551.95
+  RANDOM_4h kraken mean over 3 seeds: TEST exp=$-3.49 PF=0.82 net=$-682.63 sDD=$829.84 | ALL exp=$-1.9 PF=0.9 net=$-1201.81
+
+== §3 DUMP & HEDGE 2026 HOLD-OUT (v1 tuned T3/TP8/SL10/H96, $300) ==
+DUMP&HEDGE hard   FULL  n= 161 exp=$ +1.51 PF= 1.26 net=$ +242.56 sDD=$   5.42 pDD=$ 198.68 | 2026-ONLY n=  33 exp=$ +0.63 PF= 1.13 net=$  +20.95 sDD=$  48.73 pDD=$  61.49 [fail]
+  2026 BTCUSDT: n=  4 exp=$ +9.68 PF=999.0 net=$  +38.73 sDD=$   0.0 pDD=$   0.0
+  2026 ETHUSDT: n= 14 exp=$ -1.75 PF= 0.58 net=$  -24.51 sDD=$ 35.76 pDD=$ 35.76
+  2026 SOLUSDT: n= 15 exp=$ +0.45 PF= 1.07 net=$   +6.73 sDD=$  33.7 pDD=$ 42.82
+DUMP&HEDGE kraken FULL  n= 161 exp=$ +2.23 PF= 1.41 net=$ +359.03 sDD=$   0.48 pDD=$ 180.95 | 2026-ONLY n=  33 exp=$ +1.36 PF=  1.3 net=$  +44.78 sDD=$  43.43 pDD=$  59.09 [PASS-2026]
+  2026 BTCUSDT: n=  4 exp=$+10.42 PF=999.0 net=$  +41.68 sDD=$   0.0 pDD=$   0.0
+  2026 ETHUSDT: n= 14 exp=$ -1.03 PF= 0.73 net=$  -14.47 sDD=$ 33.66 pDD=$ 33.66
+  2026 SOLUSDT: n= 15 exp=$ +1.17 PF= 1.18 net=$  +17.57 sDD=$ 29.43 pDD=$  40.0
+
+== §4 DYNAMIC GRID DRAWDOWN FIXES (1h, leg $200, base = v2) ==
+GRID_BASE_v3           hard   TRAIN n= 1666 exp=$ +2.25 PF= 2.51 net=$ +3751.46 sDD=$  372.4 pDD=$3419.92 | TEST n=  546 exp=$ +1.64 PF= 1.88 net=$  +897.32 sDD=$1583.21 pDD=$2206.45 halted=False [fail]
+GRID_BASE_v3           kraken TRAIN n= 1666 exp=$ +2.74 PF= 2.85 net=$ +4558.15 sDD=$ 318.18 pDD=$3334.36 | TEST n=  546 exp=$ +2.13 PF= 2.15 net=$ +1161.33 sDD=$1440.67 pDD=$2186.95 halted=False [fail]
+GRID_ADX15             hard   TRAIN n=  374 exp=$ +2.36 PF= 2.72 net=$  +882.03 sDD=$ 139.91 pDD=$ 713.66 | TEST n=  150 exp=$ -0.58 PF= 0.86 net=$   -87.68 sDD=$ 749.11 pDD=$ 799.91 halted=False [fail]
+GRID_ADX15             kraken TRAIN n=  374 exp=$ +2.84 PF= 3.09 net=$ +1063.15 sDD=$ 139.24 pDD=$ 688.47 | TEST n=  150 exp=$  -0.1 PF= 0.98 net=$   -15.61 sDD=$ 715.24 pDD=$ 771.36 halted=False [fail]
+GRID_ADX20             hard   TRAIN n= 1062 exp=$ +2.78 PF= 3.77 net=$ +2952.42 sDD=$  357.6 pDD=$ 1844.4 | TEST n=  354 exp=$ +1.07 PF= 1.44 net=$  +379.41 sDD=$1048.79 pDD=$1344.84 halted=False [fail]
+GRID_ADX20             kraken TRAIN n= 1062 exp=$ +3.27 PF= 4.28 net=$ +3467.76 sDD=$ 284.09 pDD=$1784.96 | TEST n=  354 exp=$ +1.55 PF= 1.64 net=$  +550.24 sDD=$ 957.36 pDD=$1336.27 halted=False [fail]
+GRID_MAXLOT3           hard   TRAIN n=  350 exp=$ +1.89 PF= 1.98 net=$  +662.08 sDD=$  234.7 pDD=$ 754.58 | TEST n=   88 exp=$ -2.21 PF= 0.58 net=$  -194.15 sDD=$  575.0 pDD=$ 631.32 halted=False [fail]
+GRID_MAXLOT3           kraken TRAIN n=  350 exp=$ +2.38 PF= 2.23 net=$  +831.39 sDD=$ 233.18 pDD=$ 749.91 | TEST n=   88 exp=$ -1.73 PF= 0.67 net=$  -152.12 sDD=$ 550.25 pDD=$ 614.64 halted=False [fail]
+GRID_MAXLOT5           hard   TRAIN n=  550 exp=$  +1.8 PF= 1.95 net=$  +988.06 sDD=$ 316.12 pDD=$1248.27 | TEST n=  151 exp=$ -1.42 PF= 0.68 net=$  -213.72 sDD=$ 912.51 pDD=$ 970.78 halted=False [fail]
+GRID_MAXLOT5           kraken TRAIN n=  550 exp=$ +2.28 PF= 2.21 net=$ +1254.06 sDD=$  311.9 pDD=$1241.04 | TEST n=  151 exp=$ -0.94 PF= 0.79 net=$  -141.35 sDD=$ 872.82 pDD=$ 939.65 halted=False [fail]
+GRID_BREAKEXIT         hard   TRAIN n= 1666 exp=$ -0.57 PF= 0.78 net=$  -949.68 sDD=$1025.12 pDD=$1116.52 | TEST n=  546 exp=$ -0.92 PF= 0.66 net=$  -503.52 sDD=$ 608.48 pDD=$ 620.16 halted=False [fail]
+GRID_BREAKEXIT         kraken TRAIN n= 1666 exp=$ -0.09 PF= 0.96 net=$  -150.48 sDD=$ 236.61 pDD=$ 528.52 | TEST n=  546 exp=$ -0.44 PF= 0.82 net=$  -241.84 sDD=$ 445.99 pDD=$ 466.15 halted=False [fail]
+GRID_ATRSPACING        hard   TRAIN n= 1453 exp=$ +1.71 PF= 1.92 net=$ +2485.51 sDD=$1856.78 pDD=$4569.61 | TEST n=  672 exp=$ +1.37 PF= 1.85 net=$  +922.38 sDD=$2380.84 pDD=$2857.92 halted=False [fail]
+GRID_ATRSPACING        kraken TRAIN n= 1453 exp=$ +2.19 PF= 2.19 net=$ +3188.19 sDD=$1427.59 pDD=$4506.42 | TEST n=  672 exp=$ +1.86 PF= 2.16 net=$ +1246.95 sDD=$2230.88 pDD=$2825.52 halted=False [fail]
+GRID_DDSTOP100         hard   TRAIN n=   30 exp=$ -9.45 PF= 0.14 net=$  -283.46 sDD=$ 150.58 pDD=$ 156.77 | TEST n=   55 exp=$ -4.65 PF= 0.31 net=$  -255.87 sDD=$ 108.27 pDD=$ 166.54 halted=True [fail]
+GRID_DDSTOP100         kraken TRAIN n=   30 exp=$ -8.98 PF= 0.16 net=$  -269.54 sDD=$ 149.76 pDD=$ 156.27 | TEST n=   55 exp=$ -4.21 PF= 0.36 net=$  -231.42 sDD=$ 103.97 pDD=$  170.8 halted=True [fail]
+GRID_DDSTOP150         hard   TRAIN n=  124 exp=$ -1.16 PF= 0.71 net=$   -143.4 sDD=$ 229.13 pDD=$ 249.16 | TEST n=   87 exp=$ -3.06 PF= 0.46 net=$  -265.89 sDD=$ 188.92 pDD=$ 247.19 halted=True [fail]
+GRID_DDSTOP150         kraken TRAIN n=  124 exp=$ -0.68 PF= 0.82 net=$   -84.14 sDD=$ 221.35 pDD=$ 248.69 | TEST n=   87 exp=$ -2.58 PF= 0.54 net=$  -224.42 sDD=$ 180.66 pDD=$ 247.49 halted=True [fail]
+GRID_COMBINED          hard   TRAIN n=  548 exp=$ -0.61 PF= 0.78 net=$  -333.86 sDD=$ 180.85 pDD=$ 238.74 | TEST n=  437 exp=$ -0.14 PF= 0.93 net=$   -62.26 sDD=$ 107.09 pDD=$ 239.01 halted=True [fail]
+GRID_COMBINED          kraken TRAIN n=  752 exp=$ -0.16 PF= 0.94 net=$  -118.99 sDD=$  109.2 pDD=$ 212.76 | TEST n=  437 exp=$ +0.34 PF= 1.18 net=$   +147.7 sDD=$   28.5 pDD=$ 151.99 halted=True [fail]
+GRID_COMBINED_NOBREAK  hard   TRAIN n=  202 exp=$ +0.91 PF= 1.39 net=$  +182.92 sDD=$ 254.52 pDD=$ 385.41 | TEST n=  114 exp=$  -1.0 PF= 0.76 net=$  -114.08 sDD=$   90.1 pDD=$ 388.98 halted=True [fail]
+GRID_COMBINED_NOBREAK  kraken TRAIN n=  202 exp=$ +1.39 PF=  1.6 net=$  +280.29 sDD=$  250.9 pDD=$ 386.97 | TEST n=  114 exp=$ -0.52 PF= 0.87 net=$   -59.45 sDD=$  78.08 pDD=$ 415.98 halted=True [fail]
+
+== §5 MEAN REVERSION v2 (wide stops / time exits, exit at mean) ==
+MRv2_z1.5_SL1_H24_1h         hard   TRAIN n= 161 exp=$ -7.59 PF= 0.36 net=$ -1222.7 sDD=$1255.64 | TEST n=  84 exp=$ -5.65 PF= 0.48 net=$  -474.4 sDD=$ 474.4 pDD=$ 474.4 [fail]
+MRv2_z1.5_SL1_H24_1h         kraken TRAIN n= 161 exp=$  -2.8 PF= 0.64 net=$ -450.35 sDD=$507.38 | TEST n=  84 exp=$ -0.91 PF= 0.87 net=$  -76.75 sDD=$285.85 pDD=$285.85 [fail]
+MRv2_z1.5_SL1_H48_1h         hard   TRAIN n= 161 exp=$  -7.5 PF= 0.37 net=$-1207.08 sDD=$1228.66 | TEST n=  83 exp=$ -5.32 PF= 0.54 net=$ -441.46 sDD=$489.57 pDD=$489.57 [fail]
+MRv2_z1.5_SL1_H48_1h         kraken TRAIN n= 161 exp=$  -2.7 PF= 0.65 net=$ -434.71 sDD=$480.36 | TEST n=  83 exp=$ -0.58 PF= 0.93 net=$  -47.88 sDD=$311.41 pDD=$311.41 [fail]
+MRv2_z1.5_SL3_H24_1h         hard   TRAIN n= 161 exp=$ -7.55 PF= 0.36 net=$-1216.07 sDD=$1249.01 | TEST n=  84 exp=$ -5.63 PF= 0.48 net=$ -473.13 sDD=$473.13 pDD=$473.13 [fail]
+MRv2_z1.5_SL3_H24_1h         kraken TRAIN n= 161 exp=$ -2.77 PF= 0.64 net=$ -446.07 sDD=$ 503.1 | TEST n=  84 exp=$ -0.91 PF= 0.87 net=$  -76.48 sDD=$285.76 pDD=$285.76 [fail]
+MRv2_z1.5_SL3_H48_1h         hard   TRAIN n= 161 exp=$ -7.49 PF= 0.37 net=$-1206.56 sDD=$1228.14 | TEST n=  83 exp=$  -5.3 PF= 0.54 net=$ -440.19 sDD=$489.13 pDD=$489.13 [fail]
+MRv2_z1.5_SL3_H48_1h         kraken TRAIN n= 161 exp=$ -2.71 PF= 0.65 net=$  -436.7 sDD=$482.35 | TEST n=  83 exp=$ -0.57 PF= 0.93 net=$  -47.61 sDD=$311.32 pDD=$311.32 [fail]
+MRv2_z1.5_SL5_H24_1h         hard   TRAIN n= 161 exp=$ -7.55 PF= 0.36 net=$-1216.07 sDD=$1249.01 | TEST n=  84 exp=$ -5.63 PF= 0.48 net=$ -473.13 sDD=$473.13 pDD=$473.13 [fail]
+MRv2_z1.5_SL5_H24_1h         kraken TRAIN n= 161 exp=$ -2.77 PF= 0.64 net=$ -446.07 sDD=$ 503.1 | TEST n=  84 exp=$ -0.91 PF= 0.87 net=$  -76.48 sDD=$285.76 pDD=$285.76 [fail]
+MRv2_z1.5_SL5_H48_1h         hard   TRAIN n= 161 exp=$ -7.49 PF= 0.37 net=$-1206.56 sDD=$1228.14 | TEST n=  83 exp=$  -5.3 PF= 0.54 net=$ -440.19 sDD=$489.13 pDD=$489.13 [fail]
+MRv2_z1.5_SL5_H48_1h         kraken TRAIN n= 161 exp=$ -2.71 PF= 0.65 net=$  -436.7 sDD=$482.35 | TEST n=  83 exp=$ -0.57 PF= 0.93 net=$  -47.61 sDD=$311.32 pDD=$311.32 [fail]
+MRv2_z2.0_SL1_H24_1h         hard   TRAIN n= 157 exp=$  -8.0 PF= 0.33 net=$-1256.08 sDD=$1289.02 | TEST n=  79 exp=$ -5.49 PF= 0.49 net=$  -433.7 sDD=$ 433.7 pDD=$ 433.7 [fail]
+MRv2_z2.0_SL1_H24_1h         kraken TRAIN n= 157 exp=$  -3.2 PF= 0.59 net=$ -503.01 sDD=$560.04 | TEST n=  79 exp=$ -0.76 PF= 0.89 net=$  -60.03 sDD=$265.58 pDD=$265.58 [fail]
+MRv2_z2.0_SL1_H48_1h         hard   TRAIN n= 157 exp=$  -7.9 PF= 0.34 net=$-1240.46 sDD=$1262.04 | TEST n=  78 exp=$ -5.14 PF= 0.56 net=$ -400.76 sDD=$459.73 pDD=$459.73 [fail]
+MRv2_z2.0_SL1_H48_1h         kraken TRAIN n= 157 exp=$  -3.1 PF=  0.6 net=$ -487.37 sDD=$533.02 | TEST n=  78 exp=$  -0.4 PF= 0.95 net=$  -31.16 sDD=$291.14 pDD=$291.14 [fail]
+MRv2_z2.0_SL3_H24_1h         hard   TRAIN n= 157 exp=$ -7.96 PF= 0.33 net=$-1249.45 sDD=$1282.39 | TEST n=  79 exp=$ -5.47 PF= 0.49 net=$ -432.43 sDD=$432.84 pDD=$432.84 [fail]
+MRv2_z2.0_SL3_H24_1h         kraken TRAIN n= 157 exp=$ -3.18 PF= 0.59 net=$ -498.73 sDD=$555.76 | TEST n=  79 exp=$ -0.76 PF= 0.89 net=$  -59.76 sDD=$265.49 pDD=$265.49 [fail]
+MRv2_z2.0_SL3_H48_1h         hard   TRAIN n= 157 exp=$  -7.9 PF= 0.34 net=$-1239.94 sDD=$1261.52 | TEST n=  78 exp=$ -5.12 PF= 0.56 net=$ -399.49 sDD=$459.29 pDD=$459.29 [fail]
+MRv2_z2.0_SL3_H48_1h         kraken TRAIN n= 157 exp=$ -3.12 PF=  0.6 net=$ -489.36 sDD=$535.01 | TEST n=  78 exp=$  -0.4 PF= 0.95 net=$  -30.89 sDD=$291.05 pDD=$291.05 [fail]
+MRv2_z2.0_SL5_H24_1h         hard   TRAIN n= 157 exp=$ -7.96 PF= 0.33 net=$-1249.45 sDD=$1282.39 | TEST n=  79 exp=$ -5.47 PF= 0.49 net=$ -432.43 sDD=$432.84 pDD=$432.84 [fail]
+MRv2_z2.0_SL5_H24_1h         kraken TRAIN n= 157 exp=$ -3.18 PF= 0.59 net=$ -498.73 sDD=$555.76 | TEST n=  79 exp=$ -0.76 PF= 0.89 net=$  -59.76 sDD=$265.49 pDD=$265.49 [fail]
+MRv2_z2.0_SL5_H48_1h         hard   TRAIN n= 157 exp=$  -7.9 PF= 0.34 net=$-1239.94 sDD=$1261.52 | TEST n=  78 exp=$ -5.12 PF= 0.56 net=$ -399.49 sDD=$459.29 pDD=$459.29 [fail]
+MRv2_z2.0_SL5_H48_1h         kraken TRAIN n= 157 exp=$ -3.12 PF=  0.6 net=$ -489.36 sDD=$535.01 | TEST n=  78 exp=$  -0.4 PF= 0.95 net=$  -30.89 sDD=$291.05 pDD=$291.05 [fail]
+MRv2_z2.5_SL1_H24_1h         hard   TRAIN n= 146 exp=$ -7.81 PF= 0.34 net=$-1140.17 sDD=$1173.11 | TEST n=  75 exp=$ -5.45 PF= 0.49 net=$ -409.03 sDD=$424.09 pDD=$424.09 [fail]
+MRv2_z2.5_SL1_H24_1h         kraken TRAIN n= 146 exp=$ -3.01 PF= 0.61 net=$ -439.79 sDD=$496.82 | TEST n=  75 exp=$ -0.73 PF=  0.9 net=$  -54.55 sDD=$261.19 pDD=$261.19 [fail]
+MRv2_z2.5_SL1_H48_1h         hard   TRAIN n= 146 exp=$  -7.7 PF= 0.35 net=$-1124.55 sDD=$1146.13 | TEST n=  74 exp=$ -5.08 PF= 0.57 net=$ -376.09 sDD=$450.54 pDD=$450.54 [fail]
+MRv2_z2.5_SL1_H48_1h         kraken TRAIN n= 146 exp=$ -2.91 PF= 0.62 net=$ -424.15 sDD=$ 469.8 | TEST n=  74 exp=$ -0.35 PF= 0.96 net=$  -25.68 sDD=$286.75 pDD=$286.75 [fail]
+MRv2_z2.5_SL3_H24_1h         hard   TRAIN n= 146 exp=$ -7.76 PF= 0.34 net=$-1133.54 sDD=$1166.48 | TEST n=  75 exp=$ -5.44 PF= 0.49 net=$ -407.76 sDD=$423.65 pDD=$423.65 [fail]
+MRv2_z2.5_SL3_H24_1h         kraken TRAIN n= 146 exp=$ -2.98 PF= 0.61 net=$ -435.51 sDD=$492.54 | TEST n=  75 exp=$ -0.72 PF=  0.9 net=$  -54.28 sDD=$ 261.1 pDD=$ 261.1 [fail]
+MRv2_z2.5_SL3_H48_1h         hard   TRAIN n= 146 exp=$  -7.7 PF= 0.35 net=$-1124.03 sDD=$1145.61 | TEST n=  74 exp=$ -5.07 PF= 0.57 net=$ -374.82 sDD=$ 450.1 pDD=$ 450.1 [fail]
+MRv2_z2.5_SL3_H48_1h         kraken TRAIN n= 146 exp=$ -2.92 PF= 0.62 net=$ -426.14 sDD=$471.79 | TEST n=  74 exp=$ -0.34 PF= 0.96 net=$  -25.41 sDD=$286.66 pDD=$286.66 [fail]
+MRv2_z2.5_SL5_H24_1h         hard   TRAIN n= 146 exp=$ -7.76 PF= 0.34 net=$-1133.54 sDD=$1166.48 | TEST n=  75 exp=$ -5.44 PF= 0.49 net=$ -407.76 sDD=$423.65 pDD=$423.65 [fail]
+MRv2_z2.5_SL5_H24_1h         kraken TRAIN n= 146 exp=$ -2.98 PF= 0.61 net=$ -435.51 sDD=$492.54 | TEST n=  75 exp=$ -0.72 PF=  0.9 net=$  -54.28 sDD=$ 261.1 pDD=$ 261.1 [fail]
+MRv2_z2.5_SL5_H48_1h         hard   TRAIN n= 146 exp=$  -7.7 PF= 0.35 net=$-1124.03 sDD=$1145.61 | TEST n=  74 exp=$ -5.07 PF= 0.57 net=$ -374.82 sDD=$ 450.1 pDD=$ 450.1 [fail]
+MRv2_z2.5_SL5_H48_1h         kraken TRAIN n= 146 exp=$ -2.92 PF= 0.62 net=$ -426.14 sDD=$471.79 | TEST n=  74 exp=$ -0.34 PF= 0.96 net=$  -25.41 sDD=$286.66 pDD=$286.66 [fail]
+MRv2_z1.5_SL1_H96_15m        hard   TRAIN n= 532 exp=$  -5.4 PF= 0.42 net=$ -2872.9 sDD=$2879.26 | TEST n= 252 exp=$ -6.55 PF= 0.28 net=$-1650.04 sDD=$1650.04 pDD=$1664.87 [fail]
+MRv2_z1.5_SL1_H96_15m        kraken TRAIN n= 532 exp=$ -0.62 PF= 0.89 net=$ -328.42 sDD=$339.59 | TEST n= 252 exp=$ -1.76 PF= 0.66 net=$ -443.08 sDD=$443.08 pDD=$473.67 [fail]
+MRv2_z1.5_SL3_H96_15m        hard   TRAIN n= 532 exp=$ -5.23 PF= 0.43 net=$ -2783.5 sDD=$2789.86 | TEST n= 252 exp=$ -6.55 PF= 0.28 net=$ -1649.5 sDD=$1649.5 pDD=$1664.33 [fail]
+MRv2_z1.5_SL3_H96_15m        kraken TRAIN n= 532 exp=$ -0.45 PF= 0.92 net=$ -239.96 sDD=$255.61 | TEST n= 252 exp=$ -1.76 PF= 0.66 net=$ -442.96 sDD=$442.96 pDD=$473.55 [fail]
+MRv2_z1.5_SL5_H96_15m        hard   TRAIN n= 532 exp=$ -5.23 PF= 0.43 net=$ -2783.5 sDD=$2789.86 | TEST n= 252 exp=$ -6.55 PF= 0.28 net=$ -1649.5 sDD=$1649.5 pDD=$1664.33 [fail]
+MRv2_z1.5_SL5_H96_15m        kraken TRAIN n= 532 exp=$ -0.45 PF= 0.92 net=$ -239.96 sDD=$255.61 | TEST n= 252 exp=$ -1.76 PF= 0.66 net=$ -442.96 sDD=$442.96 pDD=$473.55 [fail]
+MRv2_z2.0_SL1_H96_15m        hard   TRAIN n= 518 exp=$ -5.36 PF= 0.42 net=$-2776.39 sDD=$2782.75 | TEST n= 244 exp=$ -6.66 PF= 0.27 net=$-1624.45 sDD=$1624.45 pDD=$1639.28 [fail]
+MRv2_z2.0_SL1_H96_15m        kraken TRAIN n= 518 exp=$ -0.58 PF= 0.89 net=$ -299.04 sDD=$310.21 | TEST n= 244 exp=$ -1.87 PF= 0.64 net=$  -455.9 sDD=$ 455.9 pDD=$486.49 [fail]
+MRv2_z2.0_SL3_H96_15m        hard   TRAIN n= 518 exp=$ -5.19 PF= 0.44 net=$-2686.99 sDD=$2693.35 | TEST n= 244 exp=$ -6.66 PF= 0.27 net=$-1623.91 sDD=$1623.91 pDD=$1638.74 [fail]
+MRv2_z2.0_SL3_H96_15m        kraken TRAIN n= 518 exp=$ -0.41 PF= 0.92 net=$ -210.58 sDD=$226.21 | TEST n= 244 exp=$ -1.87 PF= 0.64 net=$ -455.78 sDD=$455.78 pDD=$486.37 [fail]
+MRv2_z2.0_SL5_H96_15m        hard   TRAIN n= 518 exp=$ -5.19 PF= 0.44 net=$-2686.99 sDD=$2693.35 | TEST n= 244 exp=$ -6.66 PF= 0.27 net=$-1623.91 sDD=$1623.91 pDD=$1638.74 [fail]
+MRv2_z2.0_SL5_H96_15m        kraken TRAIN n= 518 exp=$ -0.41 PF= 0.92 net=$ -210.58 sDD=$226.21 | TEST n= 244 exp=$ -1.87 PF= 0.64 net=$ -455.78 sDD=$455.78 pDD=$486.37 [fail]
+MRv2_z2.5_SL1_H96_15m        hard   TRAIN n= 466 exp=$ -5.28 PF= 0.44 net=$-2461.28 sDD=$2467.64 | TEST n= 220 exp=$ -6.44 PF= 0.29 net=$-1415.97 sDD=$1415.97 pDD=$1430.8 [fail]
+MRv2_z2.5_SL1_H96_15m        kraken TRAIN n= 466 exp=$  -0.5 PF= 0.91 net=$ -233.39 sDD=$277.71 | TEST n= 220 exp=$ -1.65 PF= 0.68 net=$ -362.47 sDD=$362.47 pDD=$400.65 [fail]
+MRv2_z2.5_SL3_H96_15m        hard   TRAIN n= 466 exp=$ -5.09 PF= 0.45 net=$-2371.88 sDD=$2378.24 | TEST n= 220 exp=$ -6.43 PF= 0.29 net=$-1415.43 sDD=$1415.43 pDD=$1430.26 [fail]
+MRv2_z2.5_SL3_H96_15m        kraken TRAIN n= 466 exp=$ -0.31 PF= 0.94 net=$ -144.93 sDD=$188.39 | TEST n= 220 exp=$ -1.65 PF= 0.68 net=$ -362.35 sDD=$362.35 pDD=$400.53 [fail]
+MRv2_z2.5_SL5_H96_15m        hard   TRAIN n= 466 exp=$ -5.09 PF= 0.45 net=$-2371.88 sDD=$2378.24 | TEST n= 220 exp=$ -6.43 PF= 0.29 net=$-1415.43 sDD=$1415.43 pDD=$1430.26 [fail]
+MRv2_z2.5_SL5_H96_15m        kraken TRAIN n= 466 exp=$ -0.31 PF= 0.94 net=$ -144.93 sDD=$188.39 | TEST n= 220 exp=$ -1.65 PF= 0.68 net=$ -362.35 sDD=$362.35 pDD=$400.53 [fail]
+
+== §6 4h / DAILY versions of best v2 strategies (long-only) ==
+daily data: 1045 bars/asset, split@731, test bars=314
+TREND_FOLLOW_1d  hard   TRAIN n=  29 exp=$ -1.96 PF=  0.9 net=$  -56.72 sDD=$  87.7 | TEST n=  11 exp=$-12.48 PF= 0.51 net=$ -137.33 sDD=$137.33 pDD=$263.63 [fail]
+TREND_FOLLOW_1d  kraken TRAIN n=  29 exp=$ -0.41 PF= 0.98 net=$  -11.77 sDD=$ 79.52 | TEST n=  11 exp=$-10.57 PF= 0.57 net=$ -116.23 sDD=$116.23 pDD=$253.71 [fail]
+PULLBACK_1d  hard   TRAIN n=  32 exp=$ -0.29 PF= 0.99 net=$    -9.4 sDD=$ 32.58 | TEST n=   7 exp=$+11.27 PF= 1.37 net=$  +78.88 sDD=$   0.0 pDD=$213.41 [fail]
+PULLBACK_1d  kraken TRAIN n=  32 exp=$  +1.0 PF= 1.03 net=$  +31.87 sDD=$ 11.35 | TEST n=   7 exp=$ +13.6 PF= 1.47 net=$  +95.17 sDD=$   0.0 pDD=$202.71 [fail]
+TURTLE_1d  hard   TRAIN n=  34 exp=$  +2.5 PF= 1.22 net=$   +85.1 sDD=$ 23.18 | TEST n=  21 exp=$  -4.3 PF= 0.66 net=$  -90.28 sDD=$166.89 pDD=$166.89 [fail]
+TURTLE_1d  kraken TRAIN n=  34 exp=$ +3.14 PF= 1.29 net=$ +106.83 sDD=$ 21.52 | TEST n=  21 exp=$ -3.62 PF=  0.7 net=$  -76.11 sDD=$159.94 pDD=$159.94 [fail]
+TRENDRIDER_4h  hard   TRAIN n= 219 exp=$ -10.6 PF= 0.61 net=$-2322.06 sDD=$2393.4 | TEST n= 115 exp=$-18.48 PF= 0.32 net=$-2124.95 sDD=$2124.95 pDD=$2130.55 [fail]
+TRENDRIDER_4h  kraken TRAIN n= 219 exp=$ -6.96 PF= 0.72 net=$-1523.77 sDD=$1604.13 | TEST n= 114 exp=$-14.48 PF= 0.41 net=$-1650.65 sDD=$1650.65 pDD=$1671.38 [fail]
+TRENDRIDER_1d  hard   TRAIN n=  22 exp=$  +8.7 PF=  1.3 net=$ +191.43 sDD=$157.01 | TEST n=  15 exp=$+35.92 PF= 2.99 net=$ +538.75 sDD=$   0.0 pDD=$162.18 [fail]
+TRENDRIDER_1d  kraken TRAIN n=  22 exp=$+12.53 PF= 1.46 net=$ +275.72 sDD=$128.93 | TEST n=  15 exp=$+40.02 PF= 3.36 net=$ +600.26 sDD=$   0.0 pDD=$152.47 [fail]
+-- DIAG-SHORT (shorts NOT Kraken-eligible; diagnostic only) --
+TURTLE_SHORT_DIAG_4H hard   TEST n= 155 exp=$ -3.06 PF= 0.73 net=$ -474.41 sDD=$490.19 pDD=$832.34 [DIAG ONLY — never funded]
+TURTLE_SHORT_DIAG_4H kraken TEST n= 155 exp=$ -1.41 PF= 0.87 net=$ -219.12 sDD=$239.01 pDD=$631.39 [DIAG ONLY — never funded]
+
+== §7 FULL v2 14-STRATEGY SET UNDER STATIC DRAWDOWN ==
+TREND_FOLLOW_4H            hard   TRAIN n=  238 exp=$ -10.1 PF= 0.55 net=$ -2403.24 sDD=$2403.24 pDD=$2419.71 | TEST n=  101 exp=$-12.58 PF=  0.5 net=$ -1270.74 sDD=$1563.48 pDD=$1714.08 [fail test-gate]
+PULLBACK_4H                hard   TRAIN n=  224 exp=$ +4.94 PF= 1.18 net=$ +1107.34 sDD=$  26.99 pDD=$ 683.22 | TEST n=  127 exp=$ -2.57 PF=  0.9 net=$  -326.41 sDD=$ 785.74 pDD=$1052.72 [fail test-gate]
+RSI2_RANGE_1H              hard   TRAIN n=  433 exp=$ -6.57 PF= 0.19 net=$ -2844.41 sDD=$2844.41 pDD=$2845.51 | TEST n=  115 exp=$ -6.44 PF= 0.16 net=$  -740.72 sDD=$ 740.72 pDD=$ 740.72 [fail test-gate]
+VWAP_BOUNCE_15M            hard   TRAIN n=  320 exp=$ -8.73 PF= 0.51 net=$ -2795.01 sDD=$2806.22 pDD=$2937.48 | TEST n=  177 exp=$  -7.2 PF= 0.52 net=$ -1274.15 sDD=$1274.15 pDD=$1297.15 [fail test-gate]
+VWAP_RETEST_15M            hard   TRAIN n=  574 exp=$ -5.07 PF= 0.44 net=$ -2911.72 sDD=$2911.72 pDD=$2911.72 | TEST n=  206 exp=$ -6.76 PF=  0.3 net=$ -1392.86 sDD=$1392.86 pDD=$1402.26 [fail test-gate]
+TRENDRIDER_1H              hard   TRAIN n=  935 exp=$ -8.37 PF= 0.46 net=$ -7824.11 sDD=$7825.82 pDD=$7882.19 | TEST n=  407 exp=$ -8.13 PF= 0.38 net=$ -3307.06 sDD=$3307.06 pDD=$3346.28 [fail test-gate]
+TURTLE_4H                  hard   TRAIN n=  236 exp=$ +1.04 PF= 1.08 net=$  +244.41 sDD=$  21.94 pDD=$  459.6 | TEST n=  103 exp=$ -1.42 PF=  0.9 net=$  -146.41 sDD=$ 729.22 pDD=$ 810.62 [fail test-gate]
+TURTLE_TP1_4H              hard   TRAIN n=  429 exp=$ -1.98 PF= 0.81 net=$   -847.6 sDD=$  847.6 pDD=$ 979.29 | TEST n=  164 exp=$ -4.77 PF=  0.6 net=$  -781.78 sDD=$ 781.78 pDD=$ 935.13 [fail test-gate]
+EMA_RIBBON_15M             hard   TRAIN n= 4756 exp=$ -5.94 PF= 0.17 net=$-28262.55 sDD=$28262.55 pDD=$28266.79 | TEST n= 1848 exp=$ -6.02 PF= 0.16 net=$-11130.31 sDD=$11130.31 pDD=$11130.31 [fail test-gate]
+RANGE_1H                   hard   TRAIN n=  791 exp=$ -5.46 PF= 0.63 net=$ -4315.83 sDD=$4408.13 pDD=$4433.49 | TEST n=  392 exp=$ -6.02 PF= 0.59 net=$ -2361.52 sDD=$2361.52 pDD=$2411.45 [fail test-gate]
+VOL_BREAKOUT_1H            hard   TRAIN n=  603 exp=$ -4.63 PF= 0.65 net=$ -2792.73 sDD=$2792.73 pDD=$2826.52 | TEST n=  347 exp=$ -5.25 PF= 0.58 net=$ -1822.95 sDD=$1822.95 pDD=$1873.98 [fail test-gate]
+TREND_ASSASSIN_1H          hard   TRAIN n=  377 exp=$ -8.22 PF= 0.58 net=$ -3100.76 sDD=$3100.76 pDD=$3100.76 | TEST n=  117 exp=$ -8.53 PF= 0.54 net=$  -997.68 sDD=$ 997.68 pDD=$ 997.68 [fail test-gate]
+MEAN_REV_ZSCORE_1H         hard   TRAIN n=  157 exp=$ -8.26 PF= 0.33 net=$ -1297.54 sDD=$1297.54 pDD=$1297.54 | TEST n=   77 exp=$ -6.27 PF= 0.49 net=$  -482.95 sDD=$ 482.95 pDD=$ 482.95 [fail test-gate]
+DYN_GRID_1H                hard   TRAIN n= 1666 exp=$ +2.25 PF= 2.51 net=$ +3751.46 sDD=$  372.4 pDD=$3419.92 | TEST n=  546 exp=$ +1.64 PF= 1.88 net=$  +897.32 sDD=$1583.21 pDD=$2206.45 [fail test-gate]
+KALMAN_PAIRS_1H            hard   TRAIN n=  568 exp=$  -3.9 PF= 0.59 net=$ -2213.49 sDD=$2245.36 pDD=$2256.95 | TEST n=  256 exp=$ -2.44 PF= 0.68 net=$  -625.65 sDD=$ 627.81 pDD=$ 716.24 [fail test-gate]
+MOMENTUM_ROT_1H            hard   TRAIN n=   66 exp=$ +5.59 PF= 1.17 net=$   +369.1 sDD=$ 224.48 pDD=$ 402.79 | TEST n=   23 exp=$ -7.85 PF= 0.76 net=$  -180.49 sDD=$ 372.46 pDD=$ 372.46 [fail test-gate]
+STACK (hard): members=[] n=0 net=$0.0 staticDD=$0.0 peakDD=$0.0 minEq=$10000.0 Kraken target +$1,200 / static DD <=$300
+TREND_FOLLOW_4H            kraken TRAIN n=  238 exp=$ -6.62 PF= 0.68 net=$ -1574.77 sDD=$1649.33 pDD=$1748.87 | TEST n=  100 exp=$ -7.84 PF= 0.64 net=$  -783.64 sDD=$1191.01 pDD=$1359.48 [fail test-gate]
+PULLBACK_4H                kraken TRAIN n=  224 exp=$ +8.53 PF= 1.33 net=$ +1911.83 sDD=$  22.23 pDD=$ 616.28 | TEST n=  127 exp=$ +1.51 PF= 1.06 net=$  +192.13 sDD=$ 405.22 pDD=$ 779.73 [fail test-gate]
+RSI2_RANGE_1H              kraken TRAIN n=  433 exp=$ -1.78 PF= 0.62 net=$  -772.35 sDD=$ 777.87 pDD=$ 829.67 | TEST n=  115 exp=$ -1.64 PF= 0.62 net=$   -189.1 sDD=$ 216.99 pDD=$ 216.99 [fail test-gate]
+VWAP_BOUNCE_15M            kraken TRAIN n=  320 exp=$ -3.95 PF= 0.72 net=$ -1263.19 sDD=$1365.06 pDD=$1515.75 | TEST n=  177 exp=$  -2.4 PF=  0.8 net=$  -424.81 sDD=$ 431.59 pDD=$ 462.87 [fail test-gate]
+VWAP_RETEST_15M            kraken TRAIN n=  574 exp=$ -0.27 PF= 0.96 net=$  -157.29 sDD=$ 353.93 pDD=$ 510.08 | TEST n=  206 exp=$ -1.97 PF=  0.7 net=$  -404.89 sDD=$ 404.89 pDD=$ 419.11 [fail test-gate]
+TRENDRIDER_1H              kraken TRAIN n=  933 exp=$ -4.55 PF= 0.65 net=$ -4249.53 sDD=$4255.71 pDD=$4320.26 | TEST n=  404 exp=$ -4.12 PF= 0.61 net=$ -1664.85 sDD=$1664.85 pDD=$1712.15 [fail test-gate]
+TURTLE_4H                  kraken TRAIN n=  236 exp=$  +2.7 PF= 1.24 net=$   +637.6 sDD=$  20.39 pDD=$ 393.42 | TEST n=  103 exp=$ +0.69 PF= 1.05 net=$   +71.12 sDD=$ 589.98 pDD=$ 682.02 [fail test-gate]
+TURTLE_TP1_4H              kraken TRAIN n=  429 exp=$ -0.38 PF= 0.96 net=$  -160.94 sDD=$ 254.12 pDD=$ 467.18 | TEST n=  164 exp=$ -2.89 PF= 0.74 net=$  -473.25 sDD=$ 473.25 pDD=$  651.1 [fail test-gate]
+EMA_RIBBON_15M             kraken TRAIN n= 4756 exp=$ -1.36 PF= 0.73 net=$  -6469.9 sDD=$6484.76 pDD=$6498.62 | TEST n= 1848 exp=$ -1.34 PF= 0.72 net=$ -2471.03 sDD=$2471.03 pDD=$2593.84 [fail test-gate]
+RANGE_1H                   kraken TRAIN n=  791 exp=$ -0.66 PF= 0.94 net=$  -520.78 sDD=$1209.33 pDD=$1558.24 | TEST n=  392 exp=$ -1.23 PF= 0.89 net=$  -480.98 sDD=$ 480.98 pDD=$ 990.11 [fail test-gate]
+VOL_BREAKOUT_1H            kraken TRAIN n=  603 exp=$ +0.17 PF= 1.02 net=$  +101.15 sDD=$  77.94 pDD=$  462.5 | TEST n=  347 exp=$ -0.45 PF= 0.95 net=$  -157.87 sDD=$ 272.98 pDD=$ 352.92 [fail test-gate]
+TREND_ASSASSIN_1H          kraken TRAIN n=  377 exp=$ -3.25 PF=  0.8 net=$ -1225.42 sDD=$1299.81 pDD=$1373.65 | TEST n=  117 exp=$ -3.88 PF= 0.75 net=$  -454.24 sDD=$ 633.41 pDD=$ 633.41 [fail test-gate]
+MEAN_REV_ZSCORE_1H         kraken TRAIN n=  157 exp=$ -3.47 PF= 0.57 net=$  -544.55 sDD=$ 562.73 pDD=$ 593.77 | TEST n=   77 exp=$ -1.56 PF= 0.81 net=$  -119.93 sDD=$ 291.14 pDD=$ 291.14 [fail test-gate]
+DYN_GRID_1H                kraken TRAIN n= 1666 exp=$ +2.74 PF= 2.85 net=$ +4558.15 sDD=$ 318.18 pDD=$3334.36 | TEST n=  546 exp=$ +2.13 PF= 2.15 net=$ +1161.33 sDD=$1440.67 pDD=$2186.95 [fail test-gate]
+KALMAN_PAIRS_1H            kraken TRAIN n=  568 exp=$  -1.5 PF= 0.82 net=$  -852.09 sDD=$ 919.38 pDD=$ 981.29 | TEST n=  256 exp=$ -0.04 PF= 0.99 net=$   -11.38 sDD=$ 159.63 pDD=$ 277.05 [fail test-gate]
+MOMENTUM_ROT_1H            kraken TRAIN n=   66 exp=$ +6.28 PF=  1.2 net=$   +414.7 sDD=$ 207.68 pDD=$ 388.39 | TEST n=   23 exp=$ -7.22 PF= 0.78 net=$  -166.09 sDD=$ 365.26 pDD=$ 365.26 [fail test-gate]
+STACK (kraken): members=[] n=0 net=$0.0 staticDD=$0.0 peakDD=$0.0 minEq=$10000.0 Kraken target +$1,200 / static DD <=$300
+
+Saved experiments_v3_results.json
