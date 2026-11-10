@@ -21,18 +21,11 @@ live order, `place_live_order()` in `backtest.py` raises and logs it.**
   proven winners: in run 3 that is BREAKOUT alone, $10,000 of $10,000
   (n=75, exp +$0.85 — a real but razor-thin edge).
 
-## Name & GitHub home — ApexGrid (proposed, Kevin confirming)
-**Working name: ApexGrid.** Kevin offered "ApexGrid" as the name — treat it
-as proposed until he confirms it in chat (if it turns out to be a strategy
-name instead of the bot name, this section gets corrected).
-- **No GitHub repo exists yet.** When Kevin confirms the name, he creates
-  the empty repo `ApexGrid` at github.com/new — Muse's GitHub App cannot
-  create repos. Then this folder is prepped for push to
-  `kevinleestites2-dev/ApexGrid`.
-- Until then, the build lives here in
-  `~/workspace/goals/swarm-training-trading-bot/files/swarm-v0/` and this
-  README is the home. Do not push anywhere until Kevin confirms the name
-  and creates the repo.
+## Name & GitHub home — ApexGrid (confirmed)
+**Name: ApexGrid.** Kevin offered it twice and confirmed it — this is the bot's name.
+- **GitHub home is live: https://github.com/kevinleestites2-dev/ApexGrid — private, created 2026-11-10 by Zapia, first code push 2026-11-10 (commit 60774389827db8954f1d8b679126449275135691, branch main).**
+- It stays **private** until the bot proves itself on paper (Kraken target: +12%, never drop 3%). Public only if/when it earns it.
+- Local build lives in `~/workspace/goals/swarm-training-trading-bot/files/swarm-v0/`; the `data/` folder (47 MB of Binance klines) is NOT pushed — re-fetch it with `fetch_15m.py` / the Binance.US public API, no key needed.
 
 ## The learning loop (paper trading + learning is the core)
 1. **Paper trade** — every signal fills at the next bar's open on real

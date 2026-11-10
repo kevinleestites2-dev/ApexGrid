@@ -1,5 +1,5 @@
 # ApexGrid (swarm v0) — Test Report
-**Working name: ApexGrid (proposed — Kevin confirming). Paper / simulation
+**Name: ApexGrid (confirmed). Paper / simulation
 ONLY. `LIVE_MODE = False` everywhere. No API keys, no live trades.**
 
 Data: real Binance.US klines, 2024-01-01 → 2026-11-09, no key.
@@ -175,5 +175,5 @@ loses. Full results: `experiments_results.json`.
   30% sizing + SL −10%.
 - **15m dump signals are rare:** 18 BTC dumps in ~2.9 years. This is a
   low-frequency edge by nature, not a daily income stream.
-- **No live anything.** No keys, no orders, no repo yet (ApexGrid proposed,
+- **No live anything.** No keys, no orders. GitHub repo live and private: https://github.com/kevinleestites2-dev/ApexGrid (ApexGrid confirmed,
   Kevin confirming; he creates the empty repo at github.com/new).
