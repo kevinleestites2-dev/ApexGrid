@@ -87,8 +87,8 @@ Kevin approved this run (Claude's fixes). Code: `experiments_v3.py` + `smoke_v3.
 
 ## Name & GitHub home — ApexGrid (confirmed)
 **Name: ApexGrid.** Kevin offered it twice and confirmed it — this is the bot's name.
-- **GitHub home is live: https://github.com/kevinleestites2-dev/ApexGrid — private, created 2026-11-10 by Zapia, first code push 2026-11-10 (commit 60774389827db8954f1d8b679126449275135691, branch main).**
-- It stays **private** until the bot proves itself on paper (Kraken target: +12%, never drop 3%). Public only if/when it earns it.
+- **GitHub home is live: https://github.com/kevinleestites2-dev/ApexGrid — PUBLIC since 2026-11-10 (made public by Kevin so Claude can review it), created 2026-11-10 by Zapia, first code push 2026-11-10 (commit 60774389827db8954f1d8b679126449275135691, branch main).**
+- It was private until 2026-11-10, when Kevin made it public for Claude's review. No secrets in the repo — no API keys, no exchange credentials, no tokens; data/ (47 MB klines) is excluded via .gitignore.
 - Local build lives in `~/workspace/goals/swarm-training-trading-bot/files/swarm-v0/`; the `data/` folder (47 MB of Binance klines) is NOT pushed — re-fetch it with `fetch_15m.py` / the Binance.US public API, no key needed.
 
 ## The learning loop (paper trading + learning is the core)
