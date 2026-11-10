@@ -92,14 +92,23 @@ class Ctx:
 
     def echo_agrees(self, i):
         """Echo FFT + shape match, cached every 16 bars (same thresholds
-        as strategies.py EchoAgent). Returns True/False."""
-        key = i // 16
-        if key in self._echo_cache:
-            return self._echo_cache[key]
+        as strategies.py EchoAgent). Returns True/False.
+
+        BUG FIX (v1, 2026-11-10): the cache was keyed by i//16 but the
+        computation used the CURRENT bar i — so the cached value depended
+        on which bar of the block first called it, and two runs sharing
+        a Ctx gave different results (GRID_ECHO_NOSTOP: n=784 fresh vs
+        n=776 after other variants ran on the same ctx). The value is
+        now computed at the block's first bar i0 = (i//16)*16 and cached
+        under i0, so it is identical regardless of call order.
+        """
+        i0 = (i // 16) * 16
+        if i0 in self._echo_cache:
+            return self._echo_cache[i0]
         ok = False
         closes = self.close
-        if i >= 256:
-            seg = closes[i - 256:i]
+        if i0 >= 256:
+            seg = closes[i0 - 256:i0]
             seg = seg - seg.mean()
             spec = np.abs(np.fft.rfft(seg))
             freqs = np.fft.rfftfreq(len(seg))
@@ -113,10 +122,10 @@ class Ctx:
                         dom = periods[idx]
                         break
             if dom is not None:
-                cur = closes[i - 16:i]
+                cur = closes[i0 - 16:i0]
                 cur_n = (cur - cur.mean()) / (cur.std() or 1.0)
                 best_corr, best_end = -1.0, None
-                for start in range(max(0, i - 1000), i - 32, 8):
+                for start in range(max(0, i0 - 1000), i0 - 32, 8):
                     w = closes[start:start + 16]
                     if len(w) < 16:
                         continue
@@ -124,10 +133,10 @@ class Ctx:
                     c = float(np.corrcoef(cur_n, w_n)[0, 1])
                     if c > best_corr:
                         best_corr, best_end = c, start + 16
-                if best_corr > 0.85 and best_end is not None and best_end + 8 < i:
+                if best_corr > 0.85 and best_end is not None and best_end + 8 < i0:
                     follow = (closes[best_end + 8] - closes[best_end]) / closes[best_end]
                     ok = follow > 0.01
-        self._echo_cache[key] = ok
+        self._echo_cache[i0] = ok
         return ok
 
 

@@ -18,8 +18,62 @@ live order, `place_live_order()` in `backtest.py` raises and logs it.**
 - v0 does **not** hit the target (see `test_report.md` for the honest
   numbers). Nothing here is claimed profitable, "best in the world", or
   100% — the numbers are what they are, and the allocator funds only
-  proven winners: in run 3 that is BREAKOUT alone, $10,000 of $10,000
-  (n=75, exp +$0.85 — a real but razor-thin edge).
+  proven winners.
+- **CORRECTION (v1, 2026-11-10):** v0's run-3 BREAKOUT number
+  (n=75, exp +$0.85) **does not survive a clean re-test.** The faithful
+  v0 BreakoutAgent signal, tested in a clean harness, gives
+  **n=2,869, exp −$2.56/trade** — the signal loses. v0's 75 trades were
+  what survived the engine's gates (persistent `brain.json` pair
+  suspension at −$150, Phoenix hibernation, rotation cap), not what the
+  strategy earned. **The v0 "funded $10,000 to BREAKOUT" allocation is
+  withdrawn.** The funded swarm is now Dump & Hedge only (see v1 below).
+  Full explanation: `test_report.md` §V1.1.
+
+## v1 — ApexGrid, for real this time (2026-11-10)
+Kevin said v0 was too thin — go crazy, put more in, improve the winners
+or invent new stuff, and make the strategies match the name. v1 has
+**23 agents**: a real **grid family** (12 variants, incl. ATR spacing,
+7-level, trend-armed, FOMO-gated, Echo-gated, no-stop variants), the
+**MYTHOS 10** (Supertrend, MACD Cross, Golden Cross, Stochastic,
+Fibonacci Pullback, Ichimoku, Volume-Price Delta, Volatility Expansion),
+UpsideOnly VWAP, MetaTrader proxies (funding, CVD, OI spike,
+liquidation cascade, stat arb), and NEW combos (Grid + FOMO/PANIC,
+Grid + Echo, BREAKOUT + Echo, Trend Assassin). Code:
+`experiments_v1.py` (fast harness) + `smoke_v1.py` (33/33 pass).
+Full numbers: `experiments_v1_results.json` (81 entries incl. tuning).
+- **Grid family: 10 of 12 negative.** The two positives are both
+  Echo-gated and both fail the Kraken DD test: GRID_ECHO (exp +$0.04,
+  net +$31.71, n=865, maxDD $343.19 — noise-thin, the Echo-cache fix
+  itself flipped it from −$0.04) and GRID_ECHO_NOSTOP (exp +$0.17,
+  net +$133.10, n=784, maxDD $541.63). **Neither is funded.** Grids lose
+  because the re-anchor/stop closes lots at a loss in trends and fees eat
+  the spacing. The grid is now a real, tested family — not yet a funded one.
+- **BREAKOUT: dead as a signal.** 18 faithful variants tuned (TP/SL,
+  lookback, buffer, volume filter) — best is exp −$0.63. Benched.
+- **MYTHOS + proxies + combos: all negative.** Best of the lot is
+  STAT_ARB_BTCETH (exp −$0.49) and MOMENTUM_BREAKOUT (exp −$0.52).
+- **The one family that works: Dump & Hedge.** 32 variants tuned on
+  15m BTC; best validated on all assets, **T3/TP8/SL10/H96: n=161,
+  exp +$1.51, PF 1.26, net +$242.56, maxDD $169.96 — PROVEN.**
+- **Funded swarm (v1): Dump & Hedge only — +$242.56 (+2.43%), maxDD
+  $169.96 (within $300). Kraken target +$1,200: NOT HIT.** Real edge,
+  too slow for Kraken yet. Do NOT take the challenge on this.
+- Bugs found & fixed in v1: Supertrend bands inverted (trend never
+  flipped); LIQ_CASCADE inverted TP/SL (caught by smoke test); the Echo
+  cache order-dependence (GRID_ECHO flipped sign after the fix — see
+  test_report.md §V1.7 #6); the v0 BREAKOUT measurement artifact (above);
+  the first v1 tuning sweep tested the wrong (loose) breakout copy —
+  void, superseded by the faithful-base sweep. Details:
+  `test_report.md` §§V1.0–V1.8.
+
+## v2 — 14 strategies, out-of-sample, two cost modes (2026-11-10)
+Kevin ordered the test after pausing ApexGrid: 14 strategies (his 3 + Plan B 3 + TrendRider, Turtle, EMA Ribbon, Momentum rotation, Range, Volume breakout, Trend Assassin, Mean-reversion z-score). Code: `experiments_v2.py` + `smoke_v2.py` (**30/30 pass**). Full numbers: `experiments_v2_results.json`, `test_report.md` §§V2.0–V2.6.
+- **Train 2024–2025, verify out-of-sample on 2026** (a bear year: BTC −14.8%, ETH −28.9%, SOL −31.5% in test, vs +87.5%/+13.0%/+21.2% in train). Two cost modes: HARD (0.30% RT) and KRAKEN (spread-only ~0.05% RT).
+- **Result: 0 of 14 pass the gates. The stacked swarm is EMPTY in both modes (n=0, net $0). Kraken target +$1,200: NOT HIT.**
+- **Nearest misses:** Dynamic Grid (re-centring, ADX<25) is the only strategy positive in test in both modes (Kraken test exp +$2.13, PF 2.15, net +$1,161) — but its drawdown is $1,007, 3.4x the $300 limit. Pullback (Kraken test exp +$1.51, PF 1.06, net +$192, DD $780) and Kalman Pairs (Kraken test exp −$0.04, PF 0.99, net −$11, DD $277 — breakeven) are the next-closest. Trend Assassin, Gravia's coolest idea, benches in both modes (Kraken test exp −$3.88). Mean-reversion z-score benches like the Bollinger family (win rate 14.3% in test). TrendRider's claimed 67.9% win / 1.42% DD does NOT reproduce (Kraken test exp −$4.12, PF 0.61).
+- **Bugs found & fixed in v2:** Range signal could fire below the range low (stop above entry — caught by smoke test); the first Dynamic Grid run pooled realised trades across the split and gave a fake PF=999 / $0 DD — **void**, re-run with lots realised at the split boundary and equity-curve DD (see test_report.md §V2.5). EMA Ribbon is a 15m proxy (no 5m data exists).
+- **Mean reversion as backbone (V2.7, Kevin's call): 24 variants tested hardest** (z −1.5/−2/−2.5 × exit mean/5-MA × ADX gate on/off × 1h/15m, `experiments_v2_mr.py`, `experiments_v2_mr_results.json`) — **ALL FAIL in both modes and both splits.** Best test expectancy −$0.81/trade (Kraken), best PF 0.91. Win rate ~15–25%: the mean rarely comes back before the −1.5% stop. **The backbone idea did not hold; mean reversion is benched, no backbone swarm was built.**
+- **Funded swarm is still Dump & Hedge only (v1, +$242.56, +2.43%).** v2 adds nothing to it. Do NOT take the Kraken challenge on this evidence.
 
 ## Name & GitHub home — ApexGrid (confirmed)
 **Name: ApexGrid.** Kevin offered it twice and confirmed it — this is the bot's name.
@@ -43,10 +97,12 @@ live order, `place_live_order()` in `backtest.py` raises and logs it.**
 4. **Meta Selector moves capital to winners** — Bayesian score
    `(2+wins)/(4+trades)` + TradeMemory weights + asset rotation cap;
    capital only flows to strategies with expectancy > 0 AND n >= 30.
-   In run 3 that earned exactly one strategy money: **BREAKOUT,
-   $10,000 of $10,000** (n=75, exp +$0.85). Everyone else gets $0 —
-   the allocator is doing its job by refusing to fund unproven or
-   losing strategies.
+   **v1 correction:** run 3's BREAKOUT allocation (n=75, exp +$0.85)
+   was withdrawn — that number was an engine-gated artifact (see §V1.1
+   in `test_report.md`). The funded swarm is now Dump & Hedge only
+   (T3/TP8/SL10/H96, n=161, exp +$1.51, net +$242.56). Everyone else
+   gets $0 — the allocator is doing its job by refusing to fund
+   unproven or losing strategies.
 
 ## Strategy selection — my picks (evidence, not hype)
 Kevin delegated strategy selection: pick by backtest expectancy, risk
@@ -59,7 +115,7 @@ AND n >= 30. Right now that is $0 to everyone.
 |---|---|---|---|
 | **DUMP_HEDGE_15** (port, Kevin's favourite) | Core — 15m panic-dump fade | 3 assets, 15m: n=164, win 59.1%, exp **+$0.16**/trade, PF 1.03, net +$26.81, maxDD $182.81 — technically positive, but the edge lives **only on BTC** (n=18, exp +$4.29, net +$77.29, maxDD $6.76); ETH exp −$0.14, SOL exp −$0.53 | **CORE ON BTC ONLY.** ETH/SOL benched. Per-asset n is still <30, so even the BTC edge is unproven — but it is the best risk-adjusted signal in v0. |
 | **DOUBLE_PANIC** (NEW) | — | 3 assets, 15m: n=83, win 59.0%, exp **−$0.36**/trade, net −$29.70. BTC-only looked perfect (n=10, win 100%, exp +$8.46) but ETH/SOL killed it (SOL exp −$2.90) | **BENCHED.** The RSI<25 confirmation filter made it worse, not better. The BTC-only 100% was small-n luck. |
-| **BREAKOUT** (port) | **CORE — first proven winner, funded $10,000** | Run 3 (fixed regime): n=75, win 41%, exp **+$0.85**/trade, PF 1.08, net +$63.87, maxDD $226.43. Run 2's 0 trades were the regime bug. | **CORE. Thin edge (PF 1.08) — real, but barely above breakeven. The allocator funds it 100% because it is the only proven winner.** |
+| **BREAKOUT** (port) | ~~CORE — first proven winner, funded $10,000~~ — **WITHDRAWN in v1** | Run 3 (fixed regime): n=75, win 41%, exp **+$0.85**/trade, PF 1.08, net +$63.87, maxDD $226.43. Run 2's 0 trades were the regime bug. **v1 clean re-test of the same signal: n=2,869, exp −$2.56 — the signal loses; the v0 number was an engine-gated artifact (persistent brain.json suspension + Phoenix + rotation). 18 tuned variants, best exp −$0.63. See test_report.md §V1.1–V1.2.** | **BENCHED as a signal. The suspension/Phoenix controls that produced the v0 number are KEPT as risk controls — they stop bleeding — but no strategy is funded on an engine-gated number again.** |
 | **RSI_MEAN_REVERSION** (port) | — | Run 3: n=11, exp −$0.54, net −$5.93. Run 2's +$3.54 was an artifact of the broken regime gate (it traded in all regimes mislabelled SIDEWAYS). | **DEMOTED from core.** Negative with a real gate. |
 | **Q_LEARNING** (port) | Learning core — the learner itself | Run 3: n=67, exp −$1.56, net −$104.31 **[PROVEN loser]** (improved from −$5.71 in run 2); frozen test split: **0 trades** (it learned HOLD is safest — the correct lesson when every action loses) | **BENCHED as a trader, KEPT as the learning mechanism.** Powers META_LEARNER. |
 | **BOLLINGER_FADE** (port) | — | Run 3: n=16, exp −$8.08, net −$129.36 | **BENCHED.** Negative expectancy. |
@@ -132,6 +188,8 @@ python3 backtest.py       # 1h backtest, BTC/ETH/SOL, 2024-01-01 -> now
 python3 experiments.py        # fast harness: 15m dump family + new 1h ideas
 python3 experiments.py dump   # 15m track only (needs data/*_15m.json)
 python3 experiments.py new1h  # new 1h strategies + meta-learner only
+python3 experiments_v2.py     # v2: 14 strategies, train 2024-25 / test 2026, hard + Kraken modes
+python3 smoke_v2.py         # v2 smoke (30 checks, all passing)
 python3 bellman_scan.py  # Bellman paper-scan over real 1h closes
 ```
 
@@ -154,6 +212,7 @@ python3 bellman_scan.py  # Bellman paper-scan over real 1h closes
 | `backtest.py` | Engine: fills at next bar open (no lookahead), TP/SL/time-stop/max-hold, Phoenix hibernate, double-gate, Ghost slippage model, Kraken Funded metrics, Q-learning train/test split. |
 | `smoke_test.py` | 24 checks incl. crash-isolation, Kelly, mints, Bellman, live guard, learning loop. All passing. |
 | `brain.json` | TradeMemory persistence (written by backtest runs). |
+| `experiments_v2.py` / `smoke_v2.py` / `experiments_v2_results.json` | v2: 14 strategies (Kevin's 3, Plan B 3, TrendRider, Turtle x2, EMA Ribbon, Momentum rotation, Range, Volume breakout, Trend Assassin, Mean-reversion z-score), risk-sized, train 2024–25 / test 2026, hard + Kraken cost modes, stacked swarm of passers only. Smoke 30/30. Result: 0 pass, stack empty. |
 | `test_report.md` | Actual test output + backtest numbers. |
 
 ## Where every idea came from (provenance)
